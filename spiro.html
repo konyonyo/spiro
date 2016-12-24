@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>スピログラフ</title>
+        <script>
+            window.addEventListener("load", function(){
+                var canvas = document.getElementById("spiro");
+                var context = canvas.getContext("2d");
+                var plotBT = document.getElementById("plot");
+                var clearBT = document.getElementById("clear");
+                var alphaTB = document.getElementById("alpha");
+                var betaTB = document.getElementById("beta");
+                var gammaTB = document.getElementById("gamma");
+                var rotationTB = document.getElementById("rotation");
+
+                // スピログラフのパラメータ
+                var alpha = alphaTB.value;
+                var beta = betaTB.value;
+                var gamma = (gammaTB.value/180)*Math.PI;
+                var rotation = rotationTB.value; 
+                var R = canvas.width/2; // 外側の円の半径
+
+                // canvasクリア
+                clearCanvas();
+
+                // plotボタンclick
+                plotBT.addEventListener("click", function(){
+                    clearCanvas();
+                    setValue();
+                    drawCircle(R);
+                    context.strokeStyle = "rgb(45, 26, 216)";
+                    var delta = Math.PI*2/1000;
+                    var theta = 0;
+                    var x = 0;
+                    var y = 0;
+                    while(theta < Math.PI*2*rotation){
+                        x = R * (alpha * beta * Math.cos(gamma + (1 + 1/alpha) * theta) + (1 - alpha) * Math.cos(theta));
+                        y = -1 * R * (alpha * beta * Math.sin(gamma + (1 + 1/alpha) * theta) + (1 - alpha) * Math.sin(theta));
+                        plot(x, y);
+                        theta += delta;
+                    }
+                },
+                false);
+
+                // clearボタンclick
+                clearBT.addEventListener("click", function(){
+                    clearCanvas();
+                },
+                false);
+
+                // 点を(x, y)に描画する(canvasの中心が(0, 0))
+                function plot(x, y){
+                    context.beginPath();
+                    context.arc(x+canvas.width/2, canvas.height/2-y, 2, 0, Math.PI*2, true);
+                    context.stroke();
+                }
+
+                // 外側の円(半径R)を描画する
+                function drawCircle(R){
+                    context.strokeStyle = "rgb(0, 0, 0)";
+                    context.beginPath();
+                    context.arc(canvas.width/2, canvas.height/2, R, 0, Math.PI*2, true);
+                    context.stroke();
+                }
+
+                // クリア
+                function clearCanvas(){
+                    context.fillStyle = "rgb(255, 255, 255)";
+                    context.fillRect(0, 0, canvas.width, canvas.height);
+                    context.strokeStyle = "rgb(0, 0, 0)";
+                    context.strokeRect(0, 0, canvas.width, canvas.height);
+                }
+
+                // パラメータを取得する
+                function setValue(){
+                    alpha = alphaTB.value;
+                    beta = betaTB.value;
+                    gamma = gammaTB.value;
+                    rotation = rotationTB.value;
+                }
+            },
+            false);
+        </script>
+    </head>
+    <body>
+        <h1>スピログラフ</h1>
+        <p>スピログラフの軌跡は、以下のようになります。</p>
+        <p>x = R{αβcos(γ + (1 + 1/α)θ) + (1 - α)cosθ}</p>
+        <p>y = -R{αβsin(γ + (1 + 1/α)θ) + (1 - α)sinθ}</p>
+        <p>ここで、Rは外側の円の半径で、αは内側の円の半径をrとしたときr=Rαとなるようなパラメータ(0～1)です。内側の円上の点は、中心を(0, 0)として(rβcosγ, rβsinγ)と表せるため、βは0～1であり、γは0°～360°です。θは内側の円の中心の外側の円の中心に対する回転角です。パラメータα, β, γと内側の円の中心が外側の円の中心を中心として何回回転するかを入力して(n回回転するとθは0°～360°*n)、plotボタンをclickしてみてください。</p>
+            <button id="plot">plot</button><button id="clear">clear</button>
+        </p>
+        <p>
+        α(0～1):<input id="alpha" type="text"/>
+        β(0～1):<input id="beta" type="text"/>
+        γ(0～360):<input id="gamma" type="text"/>
+        内側の円が何周するか:<input id="rotation" type="text" value="10"/>
+        </p>
+        <canvas id="spiro" width="500" height="500"></canvas>
+    </body>
+</html>
