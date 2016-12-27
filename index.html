@@ -35,8 +35,8 @@
                     var x = 0;
                     var y = 0;
                     while(theta < Math.PI*2*rotation){
-                        x = R * (alpha * beta * Math.cos(gamma + (1/alpha - 1) * theta) + (1 - alpha) * Math.cos(theta));
-                        y = -1 * R * (alpha * beta * Math.sin(gamma + (1/alpha - 1) * theta) - (1 - alpha) * Math.sin(theta));
+                        x = R * (alpha * beta * Math.cos((1/alpha - 1) * theta - gamma) + (1 - alpha) * Math.cos(theta));
+                        y = -1 * R * (alpha * beta * Math.sin((1/alpha - 1) * theta - gamma) - (1 - alpha) * Math.sin(theta));
                         plot(x, y);
                         theta += delta;
                     }
